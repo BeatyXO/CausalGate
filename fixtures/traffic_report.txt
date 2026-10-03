@@ -1,0 +1,5 @@
+ALPHA TRAFFIC AND SECURITY REPORT — 2027-06-10
+
+Traffic volume from 09:30 UTC through 12:00 UTC remained within the normal weekday range.
+The edge provider recorded no volumetric denial-of-service alert, no abnormal request-rate spike, and no mitigation event during the Alpha outage.
+Requests failed because the application tier could not reach its regional upstream database/network dependencies.
