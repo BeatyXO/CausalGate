@@ -120,16 +120,24 @@ def test_all_rejected_produces_not_attributed(direct_vm,direct_deploy):
     direct_vm.mock_llm(PROMPT,result(provider=bad,deploy=bad,ddos=bad)); c.resolve_case(case)
     assert c.get_resolution(case)['result_name']=='NOT_ATTRIBUTED'
 
-def test_model_unknown_duplicate_or_omitted_rows_fail_closed(direct_vm,direct_deploy):
-    variants=[]
-    unknown=result(); unknown['candidates'][0]['criteria'][0]['key']='unknown'; variants.append((unknown,'unknown criterion'))
-    dup=result(); dup['candidates'][1]['candidate_id']=1; variants.append((dup,'duplicate candidate'))
-    missing=result(); missing['candidates']=missing['candidates'][:-1]; variants.append((missing,'exactly one row per candidate'))
-    badstatus=result(); badstatus['candidates'][0]['criteria'][0]['status']='LIKELY'; variants.append((badstatus,'unknown criterion status'))
-    for raw,msg in variants:
-        c,case,_=configure(direct_vm,direct_deploy); mock_sources(direct_vm); direct_vm.mock_llm(PROMPT,raw)
-        with direct_vm.expect_revert(msg): c.resolve_case(case)
-        direct_vm.clear_mocks()
+@pytest.mark.parametrize("variant,msg", [
+    ("unknown_criterion", "unknown criterion"),
+    ("duplicate_candidate", "duplicate candidate"),
+    ("missing_candidate", "exactly one row per candidate"),
+    ("unknown_status", "unknown criterion status"),
+])
+def test_model_unknown_duplicate_or_omitted_rows_fail_closed(direct_vm,direct_deploy,variant,msg):
+    raw=result()
+    if variant == "unknown_criterion":
+        raw['candidates'][0]['criteria'][0]['key']='unknown'
+    elif variant == "duplicate_candidate":
+        raw['candidates'][1]['candidate_id']=1
+    elif variant == "missing_candidate":
+        raw['candidates']=raw['candidates'][:-1]
+    else:
+        raw['candidates'][0]['criteria'][0]['status']='LIKELY'
+    c,case,_=configure(direct_vm,direct_deploy); mock_sources(direct_vm); direct_vm.mock_llm(PROMPT,raw)
+    with direct_vm.expect_revert(msg): c.resolve_case(case)
 
 def test_validator_rejects_forged_material_matrix(direct_vm,direct_deploy):
     c,case,_=configure(direct_vm,direct_deploy); mock_sources(direct_vm); direct_vm.mock_llm(PROMPT,result()); c.resolve_case(case)
