@@ -36,9 +36,9 @@ No deployment evidence is invented. Replace `PENDING` only with finalized result
 
 ## Verification
 
-- `python scripts/preflight.py`: `PENDING`
-- `python -m compileall contracts scripts tests`: `PENDING`
-- `genvm-lint check contracts/causalgate.py`: `PENDING`
-- `genvm-lint check contracts/causal_action_gate.py`: `PENDING`
-- Direct Mode pytest: `PENDING`
+- `python scripts/preflight.py`: `PASS` (GitHub Actions run `37135760783`)
+- `python -m compileall contracts scripts tests`: `PASS` (GitHub Actions run `37135760783`)
+- `genvm-lint check contracts/causalgate.py`: `PASS` — 3 checks, validation passed
+- `genvm-lint check contracts/causal_action_gate.py`: `PASS` — 3 checks, validation passed
+- Direct Mode pytest: `PASS` — 26 passed, 1 live-only test skipped in 43.13s (GitHub Actions run `37135760783`)
 - live stable Studionet lifecycle: `PENDING`
