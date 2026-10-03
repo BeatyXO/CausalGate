@@ -41,8 +41,8 @@
 
 ## Canonical references
 
-- Final repository verification commit: `6771baae90bd8fdbb0613763cf489139827694f5`
-- Final CI run for that commit: `37140339053`
+- Live-proof verification commit: `6771baae90bd8fdbb0613763cf489139827694f5`
+- Live-proof CI run for that commit: `37140339053`
 - Deployed contract source commit: `067dc16f86b4c35d63feb0b9a9fc6e9ef71efbbe`
 - Immutable fixture commit: `65f8ce6da8a0e14bad39bd8e51ce801194e590b1`
 - Canonical deployment and transaction evidence: `DEPLOYMENT.md`
