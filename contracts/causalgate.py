@@ -718,7 +718,7 @@ class CausalGate(gl.Contract):
             resolution_json="",
         )
         self.case_count = cid
-        CaseCreated(cid, gl.message.sender_address).emit(title=title_c)
+        gl.emit(CaseCreated(cid, gl.message.sender_address))
         return cid
 
     @gl.public.write
@@ -736,7 +736,7 @@ class CausalGate(gl.Contract):
         sid = u32(len(c.sources) + 1)
         c.sources.append(EvidenceSource(source_id=sid, label=label_c, url=url_c))
         self.cases[case_id] = c
-        EvidenceAdded(case_id, sid).emit(url=url_c)
+        gl.emit(EvidenceAdded(case_id, sid))
         return sid
 
     @gl.public.write
@@ -763,7 +763,7 @@ class CausalGate(gl.Contract):
         }))
         c.candidates.append(Candidate(candidate_id=candidate_id, key=key_c, statement=statement_c, definition_hash=c_hash))
         self.cases[case_id] = c
-        CandidateAdded(case_id, candidate_id).emit(candidate_hash=c_hash)
+        gl.emit(CandidateAdded(case_id, candidate_id))
         return candidate_id
 
     @gl.public.write
@@ -780,7 +780,7 @@ class CausalGate(gl.Contract):
         c.definition_hash = definition_hash
         c.status = u8(CASE_SEALED)
         self.cases[case_id] = c
-        CaseSealed(case_id, definition_hash).emit(candidate_count=len(c.candidates), source_count=len(c.sources))
+        gl.emit(CaseSealed(case_id, definition_hash))
         return definition_hash
 
     @gl.public.write
@@ -822,7 +822,7 @@ class CausalGate(gl.Contract):
         c.resolution_json = canonical_json(stored)
         c.status = u8(CASE_FINALIZED)
         self.cases[case_id] = c
-        CaseResolved(case_id, r_hash).emit(result=result_name(result), winning_candidate_id=winner)
+        gl.emit(CaseResolved(case_id, r_hash))
         return r_hash
 
     @gl.public.write
@@ -830,7 +830,7 @@ class CausalGate(gl.Contract):
         c = self._must_creator_draft(case_id)
         c.status = u8(CASE_CANCELLED)
         self.cases[case_id] = c
-        CaseCancelled(case_id).emit()
+        gl.emit(CaseCancelled(case_id))
         return True
 
     @gl.public.view
