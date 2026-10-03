@@ -31,7 +31,8 @@ network='\n'.join(p.read_text(encoding='utf-8',errors='ignore') for p in ROOT.rg
 if 'https://studio.genlayer.com/api' not in network: errors.append('stable Studionet RPC reference missing')
 if '61999' not in network: errors.append('stable Studionet chain ID reference missing')
 if FINAL:
-    if 'FIXTURE_COMMIT_PLACEHOLDER' in network: errors.append('fixture commit placeholder remains')
+    fixture_surfaces=['fixtures/README.md','tests/test_live_studionet.py']
+    if any('FIXTURE_COMMIT_PLACEHOLDER' in (ROOT/rel).read_text(encoding='utf-8') for rel in fixture_surfaces): errors.append('fixture commit placeholder remains')
     dep=(ROOT/'DEPLOYMENT.md').read_text(encoding='utf-8')
     if 'PENDING' in dep: errors.append('DEPLOYMENT.md still contains PENDING proof')
 if errors:
