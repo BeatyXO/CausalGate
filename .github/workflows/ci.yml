@@ -16,7 +16,4 @@ jobs:
       - run: python -m compileall contracts scripts tests
       - run: genvm-lint check contracts/causalgate.py
       - run: genvm-lint check contracts/causal_action_gate.py
-      - name: Direct Mode tests
-        env:
-          GENVM_VERSION: v0.2.16
-        run: pytest -q
+      - run: pytest -q
