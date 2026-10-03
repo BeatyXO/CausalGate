@@ -78,6 +78,8 @@ def test_duplicate_keys_urls_and_private_urls_rejected(direct_vm,direct_deploy):
         c.add_evidence_source(case,'bad','http://example.com')
     with direct_vm.expect_revert('source URL host is not public'):
         c.add_evidence_source(case,'bad','https://127.0.0.1/test')
+    with direct_vm.expect_revert('source URL host is not public'):
+        c.add_evidence_source(case,'bad','https://[::1]/test')
     c.add_candidate(case,'cause_a','cause a')
     with direct_vm.expect_revert('duplicate candidate key'):
         c.add_candidate(case,'CAUSE_A','cause b')
@@ -145,3 +147,26 @@ def test_wrong_definition_hash_is_not_consumable(direct_vm,direct_deploy):
     c,case,definition=configure(direct_vm,direct_deploy); mock_sources(direct_vm); direct_vm.mock_llm(PROMPT,result()); c.resolve_case(case)
     assert c.is_attributed(case,1,'0'*64) is False
     assert c.is_attributed(case,1,definition) is True
+
+
+def test_threshold_and_minimum_source_configuration_fail_closed(direct_vm,direct_deploy):
+    c=deploy(direct_vm,direct_deploy)
+    with direct_vm.expect_revert('supporting threshold out of range'):
+        c.create_case('x','outcome',criteria(),2,1)
+    with direct_vm.expect_revert('minimum source availability out of range'):
+        c.create_case('x','outcome',criteria(),1,0)
+
+def test_supporting_uncertainty_can_make_candidate_indeterminate(direct_vm,direct_deploy):
+    c,case,_=configure(direct_vm,direct_deploy); mock_sources(direct_vm)
+    provider=('SUPPORTED','SUPPORTED','SUPPORTED','CONTRADICTED','AMBIGUOUS')
+    direct_vm.mock_llm(PROMPT,result(provider=provider)); c.resolve_case(case)
+    r=c.get_resolution(case)
+    assert r['candidates'][0]['status_name']=='INDETERMINATE'
+    assert r['result_name']=='INDETERMINATE'
+
+def test_candidate_statement_duplicate_rejected(direct_vm,direct_deploy):
+    c=deploy(direct_vm,direct_deploy)
+    case=c.create_case('x','outcome',criteria(),1,1)
+    c.add_candidate(case,'cause_a','identical cause statement')
+    with direct_vm.expect_revert('duplicate candidate statement'):
+        c.add_candidate(case,'cause_b','identical cause statement')
