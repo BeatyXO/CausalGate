@@ -718,7 +718,7 @@ class CausalGate(gl.Contract):
             resolution_json="",
         )
         self.case_count = cid
-        gl.emit(CaseCreated(cid, gl.message.sender_address))
+        CaseCreated(cid, gl.message.sender_address).emit()
         return cid
 
     @gl.public.write
@@ -736,7 +736,7 @@ class CausalGate(gl.Contract):
         sid = u32(len(c.sources) + 1)
         c.sources.append(EvidenceSource(source_id=sid, label=label_c, url=url_c))
         self.cases[case_id] = c
-        gl.emit(EvidenceAdded(case_id, sid))
+        EvidenceAdded(case_id, sid).emit()
         return sid
 
     @gl.public.write
@@ -763,7 +763,7 @@ class CausalGate(gl.Contract):
         }))
         c.candidates.append(Candidate(candidate_id=candidate_id, key=key_c, statement=statement_c, definition_hash=c_hash))
         self.cases[case_id] = c
-        gl.emit(CandidateAdded(case_id, candidate_id))
+        CandidateAdded(case_id, candidate_id).emit()
         return candidate_id
 
     @gl.public.write
@@ -780,7 +780,7 @@ class CausalGate(gl.Contract):
         c.definition_hash = definition_hash
         c.status = u8(CASE_SEALED)
         self.cases[case_id] = c
-        gl.emit(CaseSealed(case_id, definition_hash))
+        CaseSealed(case_id, definition_hash).emit()
         return definition_hash
 
     @gl.public.write
@@ -822,7 +822,7 @@ class CausalGate(gl.Contract):
         c.resolution_json = canonical_json(stored)
         c.status = u8(CASE_FINALIZED)
         self.cases[case_id] = c
-        gl.emit(CaseResolved(case_id, r_hash))
+        CaseResolved(case_id, r_hash).emit()
         return r_hash
 
     @gl.public.write
@@ -830,7 +830,7 @@ class CausalGate(gl.Contract):
         c = self._must_creator_draft(case_id)
         c.status = u8(CASE_CANCELLED)
         self.cases[case_id] = c
-        gl.emit(CaseCancelled(case_id))
+        CaseCancelled(case_id).emit()
         return True
 
     @gl.public.view
