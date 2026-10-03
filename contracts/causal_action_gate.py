@@ -48,7 +48,7 @@ class CausalActionGate(gl.Contract):
             raise gl.vm.UserError("causal attribution requirement not satisfied")
 
         self.consumed[action] = True
-        CausalActionConsumed(action, case_id, candidate_id).emit(definition_hash=definition_hash, require_exclusive=require_exclusive)
+        gl.emit(CausalActionConsumed(action, case_id, candidate_id))
         return True
 
     @gl.public.view
