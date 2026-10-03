@@ -1,0 +1,7 @@
+ALPHA MARKETPLACE INCIDENT REPORT — 2027-06-10
+
+Alpha Marketplace was unavailable from 10:02 UTC until 11:34 UTC.
+The application depended on the Nimbus Compute us-east service for its primary API and database connectivity during that period.
+Nimbus reported a regional networking outage beginning at 09:58 UTC and service restoration at 11:29 UTC.
+Alpha health checks failed across all instances connected through the affected Nimbus regional network beginning at 10:02 UTC.
+Once Nimbus networking recovered, Alpha API and database health checks recovered without an application rollback or code change.
