@@ -693,6 +693,12 @@ class CausalGate(gl.Contract):
         if min_sources < 1 or min_sources > MAX_SOURCES:
             raise gl.vm.UserError("minimum source availability out of range")
 
+        criteria_storage = DynArray[Criterion]()
+        for criterion in criteria:
+            criteria_storage.append(criterion)
+        sources_storage = DynArray[EvidenceSource]()
+        candidates_storage = DynArray[Candidate]()
+
         cid = u256(int(self.case_count) + 1)
         self.cases[cid] = CausalCase(
             case_id=cid,
@@ -702,9 +708,9 @@ class CausalGate(gl.Contract):
             status=u8(CASE_DRAFT),
             supporting_threshold=u8(threshold),
             min_sources_available=u8(min_sources),
-            criteria=DynArray(criteria),
-            sources=[],
-            candidates=[],
+            criteria=criteria_storage,
+            sources=sources_storage,
+            candidates=candidates_storage,
             definition_hash=ZERO_HASH,
             resolution_hash=ZERO_HASH,
             result=u8(0),
