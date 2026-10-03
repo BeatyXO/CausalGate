@@ -81,8 +81,10 @@ No contract code changed. `scripts/preflight.py` was narrowly corrected so the f
 - `genvm-lint check contracts/causal_action_gate.py`: 3 lint checks passed; SDK validation could not load the cached SDK in this Windows workspace (`WinError 5: Access is denied`).
 - `pytest -q`: 9 passed, 17 failed, 1 skipped. The Direct Mode cases fail while the Windows test harness attempts to unlink open temporary files (`WinError 32`); the skipped test is the authenticated live lifecycle, which was executed separately above.
 
-### GitHub Actions baseline
+### Final GitHub Actions verification
 
-GitHub Actions run [37140147443](https://github.com/BeatyXO/CausalGate/actions/runs/37140147443) passed on evidence commit `886722023e343fe00ffa42ed81697f8b2eea940d`: preflight PASS, Python compilation PASS, both GenVM lint and validation checks PASS (3 lint checks each), and Direct Mode pytest **26 passed, 1 skipped** in 55.02s. The sole skip is the authenticated live lifecycle, which was completed separately and recorded above.
+GitHub Actions run [37140339053](https://github.com/BeatyXO/CausalGate/actions/runs/37140339053) passed on final repository commit `6771baae90bd8fdbb0613763cf489139827694f5`: preflight PASS, Python compilation PASS, both GenVM lint and validation checks PASS (3 lint checks each), and Direct Mode pytest **26 passed, 1 skipped** in 55.69s. The sole skip is the authenticated live lifecycle, which was completed separately and is recorded above.
+
+The deployed contract source remains commit `067dc16f86b4c35d63feb0b9a9fc6e9ef71efbbe`; both contract blobs are identical at final repository HEAD, so the post-deployment documentation cleanup introduced no contract drift.
 
 The runner emitted non-blocking notices that `actions/checkout@v4` and `actions/setup-python@v5` are currently forced onto Node.js 24, and that `ubuntu-latest` will migrate to Ubuntu 26 on 2026-10-19.
