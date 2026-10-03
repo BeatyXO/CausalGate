@@ -34,7 +34,7 @@ Additional hardening includes:
 
 ## Final automated verification
 
-GitHub Actions run `37140339053` on final repository commit `6771baae90bd8fdbb0613763cf489139827694f5` completed successfully:
+GitHub Actions run `37140339053` on live-proof verification commit `6771baae90bd8fdbb0613763cf489139827694f5` completed successfully:
 
 - `python scripts/preflight.py` — PASS;
 - Python compilation — PASS;
@@ -43,7 +43,7 @@ GitHub Actions run `37140339053` on final repository commit `6771baae90bd8fdbb06
 - Direct Mode/full pytest — **26 passed, 1 skipped** in 55.69s;
 - the sole skipped test is the authenticated live Studionet lifecycle, which was executed separately and is documented in `DEPLOYMENT.md`.
 
-The deployed contract source is commit `067dc16f86b4c35d63feb0b9a9fc6e9ef71efbbe`. The contract blobs at final repository HEAD are identical to that deployed source.
+The deployed contract source is commit `067dc16f86b4c35d63feb0b9a9fc6e9ef71efbbe`. The contract blobs remained identical through the live-proof verification commit, and the later cleanup is documentation-only.
 
 ## Final live verification
 
