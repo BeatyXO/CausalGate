@@ -511,6 +511,19 @@ def resolution_digest(definition_hash: str, resolution: dict, candidate_statuses
     }))
 
 
+def unavailable_resolution(candidates: list[dict], criteria: list[dict], source_states: list[dict]) -> dict:
+    raw = {"candidates": []}
+    for candidate in candidates:
+        raw["candidates"].append({
+            "candidate_id": int(candidate["candidate_id"]),
+            "criteria": [
+                {"key": criterion["key"], "status": "UNAVAILABLE", "note": "minimum evidence-source availability was not met"}
+                for criterion in criteria
+            ],
+        })
+    return canonical_resolution(raw, candidates, criteria, source_states)
+
+
 class CausalGate(gl.Contract):
     case_count: u256
     cases: TreeMap[u256, CausalCase]
@@ -540,6 +553,41 @@ class CausalGate(gl.Contract):
     def _candidate_dicts(self, c: CausalCase) -> list[dict]:
         return [candidate_payload(x) for x in c.candidates]
 
+    def _fetch_source_bundle(self, sources: list[dict]) -> tuple[list[dict], list[dict], int]:
+        source_states = []
+        bundle = []
+        total_chars = 0
+        available = 0
+        for source in sources:
+            text = ""
+            status = SOURCE_UNAVAILABLE
+            try:
+                rendered = gl.nondet.web.render(source["url"], mode="text")
+                text = str(rendered)
+                if len(text) > MAX_SOURCE_TEXT:
+                    text = text[:MAX_SOURCE_TEXT]
+                if len(text.strip()) > 0:
+                    status = SOURCE_AVAILABLE
+                    available += 1
+            except Exception:
+                text = ""
+                status = SOURCE_UNAVAILABLE
+            remaining = MAX_TOTAL_SOURCE_TEXT - total_chars
+            if remaining < 0:
+                remaining = 0
+            if len(text) > remaining:
+                text = text[:remaining]
+            total_chars += len(text)
+            source_states.append({"source_id": int(source["source_id"]), "status": int(status)})
+            bundle.append({
+                "source_id": int(source["source_id"]),
+                "label": source["label"],
+                "url": source["url"],
+                "status": "AVAILABLE" if status == SOURCE_AVAILABLE else "UNAVAILABLE",
+                "text": text,
+            })
+        return source_states, bundle, available
+
     def _resolve_consensus(self, c: CausalCase) -> dict:
         title = c.title
         outcome = c.outcome
@@ -548,58 +596,15 @@ class CausalGate(gl.Contract):
         candidates = self._candidate_dicts(c)
         min_sources = int(c.min_sources_available)
 
-        def derive() -> dict:
-            source_states = []
-            bundle = []
-            total_chars = 0
-            available = 0
-            for source in sources:
-                text = ""
-                status = SOURCE_UNAVAILABLE
-                try:
-                    rendered = gl.nondet.web.render(source["url"], mode="text")
-                    text = str(rendered)
-                    if len(text) > MAX_SOURCE_TEXT:
-                        text = text[:MAX_SOURCE_TEXT]
-                    if len(text.strip()) > 0:
-                        status = SOURCE_AVAILABLE
-                        available += 1
-                except Exception:
-                    text = ""
-                    status = SOURCE_UNAVAILABLE
-                remaining = MAX_TOTAL_SOURCE_TEXT - total_chars
-                if remaining < 0:
-                    remaining = 0
-                if len(text) > remaining:
-                    text = text[:remaining]
-                total_chars += len(text)
-                source_states.append({"source_id": int(source["source_id"]), "status": int(status)})
-                bundle.append({
-                    "source_id": int(source["source_id"]),
-                    "label": source["label"],
-                    "url": source["url"],
-                    "status": "AVAILABLE" if status == SOURCE_AVAILABLE else "UNAVAILABLE",
-                    "text": text,
-                })
-
-            if available < min_sources:
-                raw = {"candidates": []}
-                for candidate in candidates:
-                    raw["candidates"].append({
-                        "candidate_id": int(candidate["candidate_id"]),
-                        "criteria": [
-                            {"key": criterion["key"], "status": "UNAVAILABLE", "note": "minimum evidence-source availability was not met"}
-                            for criterion in criteria
-                        ],
-                    })
-                return canonical_resolution(raw, candidates, criteria, source_states)
-
-            prompt = build_prompt(title, outcome, criteria, candidates, bundle)
-            raw = gl.nondet.exec_prompt(prompt, response_format="json")
-            return canonical_resolution(decode_model_json(raw), candidates, criteria, source_states)
-
         def leader():
-            return derive()
+            source_states, bundle, available = self._fetch_source_bundle(sources)
+            if available < min_sources:
+                return unavailable_resolution(candidates, criteria, source_states)
+            raw = gl.nondet.exec_prompt(
+                build_prompt(title, outcome, criteria, candidates, bundle),
+                response_format="json",
+            )
+            return canonical_resolution(decode_model_json(raw), candidates, criteria, source_states)
 
         def validator(leaders_res) -> bool:
             try:
@@ -608,7 +613,15 @@ class CausalGate(gl.Contract):
                 proposed = leaders_res.calldata
                 if not valid_resolution_shape(proposed, candidates, criteria, sources):
                     return False
-                own = derive()
+                source_states, bundle, available = self._fetch_source_bundle(sources)
+                if available < min_sources:
+                    own = unavailable_resolution(candidates, criteria, source_states)
+                else:
+                    raw = gl.nondet.exec_prompt(
+                        build_prompt(title, outcome, criteria, candidates, bundle),
+                        response_format="json",
+                    )
+                    own = canonical_resolution(decode_model_json(raw), candidates, criteria, source_states)
                 if not valid_resolution_shape(own, candidates, criteria, sources):
                     return False
                 return material_resolution_payload(proposed) == material_resolution_payload(own)
