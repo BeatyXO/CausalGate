@@ -22,10 +22,15 @@ def test_strict_model_shape_guards():
     for marker in ['unknown candidate','duplicate candidate','unknown criterion','duplicate criterion','unknown criterion status','exactly one row per candidate','exactly one row per criterion']: assert marker in CORE
 
 def test_evidence_surface_is_frozen_and_safe():
-    assert 'source URL must use https' in CORE and 'duplicate evidence source URL' in CORE and 'definition_hash' in CORE and 'case configuration is sealed' in CORE
+    assert 'source URL must use https' in CORE and 'duplicate evidence source URL' in CORE and 'Literal IPv6 hosts are rejected' in CORE and 'definition_hash' in CORE and 'case configuration is sealed' in CORE
 
 def test_domain_separated_hashes():
     for marker in ['CAUSALGATE_CANDIDATE_V1','CAUSALGATE_DEFINITION_V1','CAUSALGATE_RESOLUTION_V1']: assert marker in CORE
 
 def test_consumer_uses_typed_ic_call_and_replay_guard():
     assert '@gl.contract_interface' in GATE and '.view().is_attributed' in GATE and '.view().is_exclusively_attributed' in GATE and 'action already consumed' in GATE
+
+
+def test_source_availability_means_text_entered_bounded_bundle():
+    assert 'Availability means usable evidence text actually entered' in CORE
+    assert 'len(text.strip()) > 0' in CORE
