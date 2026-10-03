@@ -11,7 +11,9 @@ def test_atomic_all_candidate_resolution():
     assert 'def _resolve_consensus' in CORE and 'for candidate in candidates' in CORE and 'run_nondet_unsafe' in CORE
 
 def test_validator_independently_refetches_and_rederives():
-    assert 'gl.nondet.web.render' in CORE and 'own = derive()' in CORE and 'material_resolution_payload(proposed) == material_resolution_payload(own)' in CORE
+    assert 'gl.nondet.web.render' in CORE
+    assert 'source_states, bundle, available = self._fetch_source_bundle(sources)' in CORE
+    assert 'material_resolution_payload(proposed) == material_resolution_payload(own)' in CORE
 
 def test_llm_never_decides_case_result():
     assert 'derive_candidate_status' in CORE and 'derive_case_result' in CORE and 'MULTIPLE_SUFFICIENT_CAUSES' in CORE
