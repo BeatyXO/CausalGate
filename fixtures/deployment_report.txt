@@ -1,0 +1,6 @@
+ALPHA DEPLOYMENT REPORT — 2027-06-10
+
+The most recent Alpha production deployment completed at 21:40 UTC on 2027-06-09, more than twelve hours before the incident.
+Automated checks remained healthy after deployment and through 09:57 UTC on 2027-06-10.
+No rollback was performed during the outage. The same deployed application version resumed normal operation after upstream Nimbus networking recovered.
+No deployment error correlated with the 10:02 UTC start of service unavailability.
