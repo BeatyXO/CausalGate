@@ -1,32 +1,53 @@
-# Codex finishing handoff
+# Completed implementation handoff
 
-CausalGate is substantially implemented, hardened, and already green under the pinned real GenLayer Direct Mode/lint toolchain. Preserve the architecture unless stable Studionet itself proves a concrete compatibility change is necessary.
+This file is retained as an audit record of the earlier Codex finishing handoff. **That handoff is complete. No remaining Codex deployment task is pending for the finalized CausalGate submission.**
 
 Repository: `https://github.com/BeatyXO/CausalGate.git`
 
-The live fixture URLs are pinned to immutable commit `65f8ce6da8a0e14bad39bd8e51ce801194e590b1`, which contains the fixture files. Do not repin merely because later source commits exist; repin only if you intentionally change fixture contents or the live lifecycle requires different immutable evidence.
+## Completed handoff scope
 
-## Already verified
+The finishing workflow successfully preserved the hardened CausalGate architecture and completed the environment-specific work that previously remained:
 
-GitHub Actions run `37135760783` on commit `8db459e78497f873de578cdcead78b5c434b523e` verified:
-- preflight PASS;
-- Python compilation PASS;
-- both GenVM lint checks PASS;
-- Direct Mode/full pytest: 26 passed, 1 skipped;
-- the one skipped test is the authenticated/funded live Studionet lifecycle.
+- regression verification with the pinned GenLayer tooling;
+- stable Studionet / chain `61999` network verification;
+- finalized CausalGate deployment;
+- immutable Alpha-outage case configuration;
+- atomic live causal resolution;
+- finalized CausalActionGate deployment;
+- correct pinned consumer execution;
+- wrong-definition rejection;
+- wrong-candidate/exclusivity rejection;
+- replay rejection;
+- final deployment documentation;
+- final preflight;
+- final GitHub Actions verification.
 
-Code-side work already completed includes frozen causal standards, exact evidence-source freezing, competing hypotheses, one atomic all-candidate resolution per validator evidence cycle, independent validator re-fetch/re-evaluation, strict exact-shape model parsing, deterministic REQUIRED/SUPPORTING logic, minimum usable-source availability, explicit multiple-sufficient-cause handling, definition/result hashes, typed downstream consumer, replay protection, conservative public-source validation and adversarial tests.
+The live fixture URLs remain pinned to immutable commit `65f8ce6da8a0e14bad39bd8e51ce801194e590b1`.
 
-## Remaining Codex work
+## Final repository verification
 
-1. Pull the current `main` branch and re-run preflight, compilation, both GenVM linters and pytest as a regression check. Do not redesign a green protocol.
-2. Verify the effective network is stable `studionet`, chain ID `61999`, before every live write.
-3. Execute the immutable Alpha-outage live lifecycle.
-4. Deploy CausalGate and CausalActionGate.
-5. Record only real finalized addresses, transactions, definition/resolution hashes and result evidence.
-6. Prove the consumer succeeds for the correct pinned definition/candidate and rejects wrong definition hash, wrong candidate/exclusivity and action replay.
-7. Update `DEPLOYMENT.md` only with evidence actually produced.
-8. Run `python scripts/preflight.py --final`.
-9. Commit/push the live-evidence changes and inspect the final GitHub state.
+Final GitHub Actions run `37140339053` on commit `6771baae90bd8fdbb0613763cf489139827694f5` passed:
 
-Do not weaken tests or consensus safeguards, change networks for convenience, or invent live evidence.
+- preflight;
+- Python compilation;
+- both GenVM lint/validation checks;
+- Direct Mode/full pytest: **26 passed, 1 skipped**.
+
+The single skipped test is the authenticated live lifecycle, which was executed separately and is documented with finalized evidence in `DEPLOYMENT.md`.
+
+## Final live state
+
+See `DEPLOYMENT.md` for the canonical evidence, including:
+
+- deployed CausalGate and CausalActionGate addresses;
+- deployment and lifecycle transaction hashes;
+- case ID;
+- immutable evidence-source transactions;
+- candidate registration transactions;
+- seal and resolve transactions;
+- definition and resolution hashes;
+- final causal result;
+- successful consumer transaction;
+- negative consumer proofs.
+
+Do not treat this file as an instruction to redeploy. It is retained only to document that the earlier handoff was completed.
