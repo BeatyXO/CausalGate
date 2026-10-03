@@ -237,6 +237,10 @@ def safe_https_url(value: str) -> str:
     authority = url[8:].split("/", 1)[0].lower()
     if authority == "" or "@" in authority:
         raise gl.vm.UserError("source URL authority is invalid")
+    # Literal IPv6 hosts are rejected rather than attempting incomplete local/private
+    # range parsing. Public evidence should use a DNS hostname or ordinary public IPv4.
+    if "[" in authority or "]" in authority:
+        raise gl.vm.UserError("source URL host is not public")
     host = authority.split(":", 1)[0]
     blocked_exact = ("localhost", "0.0.0.0", "127.0.0.1", "::1")
     if host in blocked_exact or host.endswith(".local"):
@@ -566,17 +570,24 @@ class CausalGate(gl.Contract):
                 text = str(rendered)
                 if len(text) > MAX_SOURCE_TEXT:
                     text = text[:MAX_SOURCE_TEXT]
-                if len(text.strip()) > 0:
-                    status = SOURCE_AVAILABLE
-                    available += 1
             except Exception:
                 text = ""
-                status = SOURCE_UNAVAILABLE
+
             remaining = MAX_TOTAL_SOURCE_TEXT - total_chars
             if remaining < 0:
                 remaining = 0
             if len(text) > remaining:
                 text = text[:remaining]
+
+            # Availability means usable evidence text actually entered this validator's
+            # bounded evidence bundle, not merely that the remote request returned.
+            if len(text.strip()) > 0:
+                status = SOURCE_AVAILABLE
+                available += 1
+            else:
+                text = ""
+                status = SOURCE_UNAVAILABLE
+
             total_chars += len(text)
             source_states.append({"source_id": int(source["source_id"]), "status": int(status)})
             bundle.append({
