@@ -33,7 +33,7 @@ def result(provider=('SUPPORTED','SUPPORTED','SUPPORTED','CONTRADICTED','SUPPORT
 
 def deploy(direct_vm,direct_deploy):
     direct_vm.check_pickling=True
-    return direct_deploy(CONTRACT)
+    return direct_deploy(CONTRACT, sdk_version="v0.2.16")
 
 def configure(direct_vm,direct_deploy):
     c=deploy(direct_vm,direct_deploy)
