@@ -1,0 +1,17 @@
+name: tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -r requirements-test.txt
+      - run: python scripts/preflight.py
+      - run: python -m compileall contracts scripts tests
+      - run: genvm-lint check contracts/causalgate.py
+      - run: genvm-lint check contracts/causal_action_gate.py
+      - run: pytest -q
