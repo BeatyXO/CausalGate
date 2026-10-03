@@ -693,11 +693,11 @@ class CausalGate(gl.Contract):
         if min_sources < 1 or min_sources > MAX_SOURCES:
             raise gl.vm.UserError("minimum source availability out of range")
 
-        criteria_storage = DynArray[Criterion]()
+        criteria_storage = gl.storage.inmem_allocate(DynArray[Criterion])
         for criterion in criteria:
             criteria_storage.append(criterion)
-        sources_storage = DynArray[EvidenceSource]()
-        candidates_storage = DynArray[Candidate]()
+        sources_storage = gl.storage.inmem_allocate(DynArray[EvidenceSource])
+        candidates_storage = gl.storage.inmem_allocate(DynArray[Candidate])
 
         cid = u256(int(self.case_count) + 1)
         self.cases[cid] = CausalCase(
