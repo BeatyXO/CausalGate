@@ -1,9 +1,9 @@
 # Live fixtures
 
-These documents provide a stable public evidence surface once this repository is pushed and pinned to an immutable commit.
+These documents provide a stable public evidence surface pinned to the immutable full-source commit below.
 
-Canonical raw base after pinning:
+Canonical raw base:
 
-https://raw.githubusercontent.com/BeatyXO/CausalGate/FIXTURE_COMMIT_PLACEHOLDER/fixtures/
+https://raw.githubusercontent.com/BeatyXO/CausalGate/65f8ce6da8a0e14bad39bd8e51ce801194e590b1/fixtures/
 
-The finishing agent must replace FIXTURE_COMMIT_PLACEHOLDER with the full source commit using scripts/pin_fixture_commit.py before live proof.
+Pinned source commit: `65f8ce6da8a0e14bad39bd8e51ce801194e590b1`
